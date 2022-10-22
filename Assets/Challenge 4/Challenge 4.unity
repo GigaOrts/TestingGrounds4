@@ -295,7 +295,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 221162286}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.7215009, y: -2.9286633, z: -0.48263764}
+  m_LocalPosition: {x: -3.7215009, y: -2.9286633, z: 11.44}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -318,7 +318,7 @@ MonoBehaviour:
   enemyCount: 0
   waveCount: 1
   player: {fileID: 583048338}
-  enemySpeedIncreaser: 10
+  newWaveSpeed: 0
 --- !u!1001 &258741155
 PrefabInstance:
   m_ObjectHideFlags: 0
