@@ -8,6 +8,7 @@ TagManager:
   - Enemy
   - GoalGates
   - Powerup Turret
+  - Powerup Jump
   layers:
   - Default
   - TransparentFX
