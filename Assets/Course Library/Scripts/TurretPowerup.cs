@@ -4,40 +4,39 @@ using UnityEngine;
 
 public class TurretPowerup : MonoBehaviour
 {
-    private const float bulletSpeed = 3f;
-
     public Transform bulletSpawnPosition;
-    public GameObject bulletPrefab;
+    public Bullet bulletPrefab;
 
     private List<Enemy> enemies;
+    private int maxShootsCount = 3;
 
-    private void Start()
-    {
-        enemies = new List<Enemy>();
-    }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision collision)
     {
-        if (other.gameObject.CompareTag("Powerup Turret"))
+        if (collision.gameObject.CompareTag("Player"))
         {
             StartCoroutine(Shoot());
+            //Destroy(gameObject);
         }
     }
 
     private IEnumerator Shoot()
     {
-        yield return new WaitForSeconds(0.3f);
+        Enemy[] tempEnemiesArray = FindObjectsOfType<Enemy>();
+        enemies = new List<Enemy>();
+        enemies.AddRange(tempEnemiesArray);
 
-        enemies.AddRange(FindObjectsOfType<Enemy>());
-
-        for (int i = 0; i < enemies.Capacity; i++)
+        for (int i = 0; i < maxShootsCount; i++)
         {
-            GameObject bullet = Instantiate(bulletPrefab, bulletSpawnPosition.position, bulletPrefab.transform.rotation);
-            Vector3 bulletDirection = (enemies[i].transform.position - bullet.transform.position).normalized;
-            //создать корутину для перемещения пули до цели, MoveBullet(GameObject bullet, Enemy enemy);
-            // Каждой пуле нужен апдейт
+            for (int j = 0; j < enemies.Capacity; j++)
+            {
+                Bullet bullet = Instantiate(bulletPrefab, bulletSpawnPosition.position, bulletPrefab.transform.rotation);
+                bullet.SetTarget(enemies[j]);
+            }
+
+            yield return new WaitForSeconds(0.3f);
         }
 
-        
+        enemies = null;
     }
 }
