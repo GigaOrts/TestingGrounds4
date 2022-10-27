@@ -6,8 +6,8 @@ public class RocketBehaviour : MonoBehaviour
     private float speed = 15f;
     private bool homing;
 
-    private float rocketStrength;
-    private float aliveTimer;
+    private float rocketStrength = 5f;
+    private float aliveTimer = 5f;
 
     public void Fire(Transform newTarget)
     {

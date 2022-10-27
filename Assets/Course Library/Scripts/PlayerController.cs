@@ -65,10 +65,11 @@ public class PlayerController : MonoBehaviour
 
     private void LaunchRockets()
     {
-        foreach (var enemy in FindObjectsOfType<Enemy>())
+        foreach (Enemy enemy in FindObjectsOfType<Enemy>())
         {
             Debug.Log("huy");
             tmpRocket = Instantiate(rocketPrefab, transform.position + Vector3.up, Quaternion.identity);
+            Debug.Log(tmpRocket);
             tmpRocket.GetComponent<RocketBehaviour>().Fire(enemy.transform);
         }
     }
