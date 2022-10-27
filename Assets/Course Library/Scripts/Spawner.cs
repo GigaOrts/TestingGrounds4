@@ -2,20 +2,14 @@ using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
-    private const float SpawnRange = 9f;
-
     public int waveNumber = 1;
     public GameObject[] enemyPrefabs;
-    public GameObject powerupPrefab;
+    public GameObject[] powerupPrefabs;
 
     private Vector3 powerupOffset = new Vector3(0f, 0.5f, 0f);
+    private float spawnRange = 9f;
     private int enemyCount;
 
-    private void Start()
-    {
-        SpawnEnemyWave(waveNumber);
-        Instantiate(powerupPrefab, GenerateSpawnPoint() + powerupOffset, powerupPrefab.transform.rotation);
-    }
     private void Update()
     {
         enemyCount = FindObjectsOfType<Enemy>().Length;
@@ -23,8 +17,16 @@ public class Spawner : MonoBehaviour
         if (enemyCount == 0)
         {
             SpawnEnemyWave(waveNumber);
-            Instantiate(powerupPrefab, GenerateSpawnPoint() + powerupOffset, powerupPrefab.transform.rotation);
+            SpawnPowerup();
         }
+    }
+
+    private void SpawnPowerup()
+    {
+        int randomPowerup = Random.Range(0, powerupPrefabs.Length);
+
+        Instantiate(powerupPrefabs[randomPowerup], GenerateSpawnPoint() + powerupOffset,
+            powerupPrefabs[randomPowerup].transform.rotation);
     }
 
     private void SpawnEnemyWave(int enemiesToSpawn)
@@ -42,8 +44,8 @@ public class Spawner : MonoBehaviour
 
     private Vector3 GenerateSpawnPoint()
     {
-        float spawnPosX = Random.Range(-SpawnRange, SpawnRange);
-        float spawnPosZ = Random.Range(-SpawnRange, SpawnRange);
+        float spawnPosX = Random.Range(-spawnRange, spawnRange);
+        float spawnPosZ = Random.Range(-spawnRange, spawnRange);
         return new Vector3(spawnPosX, 0f, spawnPosZ);
     }
 }
