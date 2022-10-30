@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -9,9 +10,9 @@ public class PlayerController : MonoBehaviour
     public GameObject rocketPrefab;
     public PowerUpType currentPowerup = PowerUpType.None;
 
-    public float hangTime = 1f;
-    public float smashSpeed = 1f;
-    public float explosionForce = 10f;
+    public float hangTime = 0.2f;
+    public float smashSpeed = 50f;
+    public float explosionForce = 40f;
     public float explosionRadius = 10f;
 
     private bool smashing;
@@ -33,7 +34,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         forwardInput = Input.GetAxis("Vertical");
-        playerRb.AddForce(focalPoint.transform.forward * forwardInput * speed);
+        playerRb.AddForce(focalPoint.transform.forward * forwardInput * speed * Time.deltaTime);
 
         powerupIndicator.transform.position = transform.position + indicatorOffset;
 
@@ -46,6 +47,16 @@ public class PlayerController : MonoBehaviour
         {
             smashing = true;
             StartCoroutine(Smash());
+        }
+
+        if (transform.position.y < -10f)
+        {
+            SceneManager.LoadScene(0);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
         }
     }
 
@@ -102,7 +113,7 @@ public class PlayerController : MonoBehaviour
 
     private IEnumerator Smash()
     {
-        var enemies = FindObjectsOfType<Enemy>();
+        Enemy[] enemies = FindObjectsOfType<Enemy>();
 
         floorY = transform.position.y;
         float jumpTime = Time.time + hangTime;
