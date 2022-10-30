@@ -9,14 +9,20 @@ public class PlayerController : MonoBehaviour
     public GameObject rocketPrefab;
     public PowerUpType currentPowerup = PowerUpType.None;
 
-    private bool hasPowerup;
-    private float forwardInput;
+    public float hangTime = 1f;
+    public float smashSpeed = 1f;
+    public float explosionForce = 10f;
+    public float explosionRadius = 10f;
+
+    private bool smashing;
+    private float floorY;
 
     private GameObject tmpRocket;
     private GameObject focalPoint;
     private Coroutine powerupCountdown;
     private Rigidbody playerRb;
     private Vector3 indicatorOffset = new Vector3(0f, -0.5f, 0f);
+    private float forwardInput;
 
     void Start()
     {
@@ -35,13 +41,18 @@ public class PlayerController : MonoBehaviour
         {
             LaunchRockets();
         }
+
+        if (currentPowerup == PowerUpType.Smash && Input.GetKeyDown(KeyCode.Space) && !smashing)
+        {
+            smashing = true;
+            StartCoroutine(Smash());
+        }
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Powerup"))
         {
-            hasPowerup = true;
             currentPowerup = other.gameObject.GetComponent<Powerup>().powerUpType;
             powerupIndicator.SetActive(true);
             Destroy(other.gameObject);
@@ -85,8 +96,38 @@ public class PlayerController : MonoBehaviour
     {
         yield return new WaitForSeconds(7f);
 
-        hasPowerup = false;
         currentPowerup = PowerUpType.None;
         powerupIndicator.SetActive(false);
+    }
+
+    private IEnumerator Smash()
+    {
+        var enemies = FindObjectsOfType<Enemy>();
+
+        floorY = transform.position.y;
+        float jumpTime = Time.time + hangTime;
+
+        while (Time.time < jumpTime)
+        {
+            playerRb.velocity = new Vector2(playerRb.velocity.x, smashSpeed);
+            yield return null;
+        }
+
+        while (transform.position.y > floorY)
+        {
+            playerRb.velocity = new Vector2(playerRb.velocity.x, -smashSpeed * 2f);
+            yield return null;
+        }
+
+        for (int i = 0; i < enemies.Length; i++)
+        {
+            if (enemies[i] != null)
+            {
+                enemies[i].GetComponent<Rigidbody>().AddExplosionForce(explosionForce, transform.position, explosionRadius,
+                    0.0f, ForceMode.Impulse);
+            }
+        }
+
+        smashing = false;
     }
 }
